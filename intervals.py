@@ -22,3 +22,5 @@ class Interval:
             sleep(self.delay)
             if self.times > 0:
                 self.times -= 1
+
+timeout = lambda delay, func: Interval(0, func, delay, 1)
