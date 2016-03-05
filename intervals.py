@@ -1,5 +1,4 @@
-from threading import Thread
-from time import sleep
+import threading
 
 class Interval:
 
@@ -12,15 +11,21 @@ class Interval:
         self.func = func
         self.start = start
         self.times = times
-        Thread(target = self.run).start()
+        self.event = threading.Event()
+        threading.Thread(target = self.run).start()
 
     def run(self):
         if self.start > 0:
-            sleep(self.start)
+            self.event.wait(self.start)
         while self.times != 0:
             self.func()
-            sleep(self.delay)
             if self.times > 0:
                 self.times -= 1
+            if self.times != 0:
+                self.event.wait(self.delay)
+
+    def stop(self):
+        self.times = 0
+        self.event.set()
 
 timeout = lambda delay, func: Interval(0, func, delay, 1)
