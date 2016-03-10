@@ -12,17 +12,18 @@ class Interval:
         self.start = start
         self.times = times
         self.event = threading.Event()
-        threading.Thread(target = self.run).start()
+        
+        def run():
+            if self.start > 0:
+                self.event.wait(self.start)
+            while self.times != 0:
+                self.func()
+                if self.times > 0:
+                    self.times -= 1
+                if self.times != 0:
+                    self.event.wait(self.delay)
 
-    def run(self):
-        if self.start > 0:
-            self.event.wait(self.start)
-        while self.times != 0:
-            self.func()
-            if self.times > 0:
-                self.times -= 1
-            if self.times != 0:
-                self.event.wait(self.delay)
+        threading.Thread(target = run).start()
 
     def stop(self):
         self.times = 0
